@@ -66,18 +66,21 @@ class BaiduFanyi:
         try:
             self.edge_browser.get(BaiduFanyi.URL.format(word=word))
             phonetics_info = []
-            for _ in range(60):
+            for _ in range(30):
                 phonetics_info = parse_page()
                 if (not check_finish_loading(word)) or (len(phonetics_info) == 0):
                     time.sleep(1)
                 else:
                     break
+            self.uk_phonetic = "N/A"
+            self.us_phonetic = "N/A"
+            self.definitions = "N/A"
             if len(phonetics_info) > 0:
                 self.phonetic_string = "   ".join([f"{i[0]}{i[-1]}" for i in phonetics_info])
                 for i in phonetics_info:
-                    if i[0]=='英':
+                    if i[0] == '英':
                         self.uk_phonetic = f"{i[0]}{i[-1]}"
-                    if i[0]=='美':
+                    if i[0] == '美':
                         self.us_phonetic = f"{i[0]}{i[-1]}"
                 self.if_definitions_found = True
         except:

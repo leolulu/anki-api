@@ -67,7 +67,6 @@ class Anki:
             }
         }
         payload.update({"params": params})
-        print(json.dumps(payload))
         return self._execute_action(payload)
 
 
