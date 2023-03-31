@@ -1,3 +1,5 @@
+import os
+from pathlib import Path
 import requests
 
 
@@ -7,5 +9,5 @@ while True:
     # with open(f"{word}_uk.mp3", 'wb') as f:
     #     f.write(r.content)
     r = requests.get(f"http://dict.youdao.com/dictvoice?type=0&audio={word}")
-    with open(f"{word}_us.mp3", 'wb') as f:
+    with open(os.path.join(str(Path.home() / "Downloads"), f"{word}_us.mp3"), 'wb') as f:
         f.write(r.content)
