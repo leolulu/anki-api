@@ -39,6 +39,7 @@ class BaiduFanyi:
 
     def _get_phonetic(self, word):
         def format_phonetic(p):
+            p = p.replace(r'/', '')
             if p[0] != '[':
                 p = '['+p
             if p[-1] != ']':
