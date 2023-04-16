@@ -1,11 +1,11 @@
-import json
 import time
-import requests
+import traceback
+
 from selenium import webdriver
 from selenium.webdriver.edge.options import Options
 from selenium.webdriver.edge.service import Service
 from selenium.webdriver.edge.webdriver import WebDriver as EdgeWebDriver
-import traceback
+from webdriver_manager.microsoft import EdgeChromiumDriverManager
 
 
 class BaiduFanyi:
@@ -18,7 +18,7 @@ class BaiduFanyi:
             edge_options.add_argument('--headless')
             edge_options.add_argument('--disable-gpu')
             edge_browser = webdriver.Edge(
-                service=Service("driver/msedgedriver.exe"),
+                service=Service(EdgeChromiumDriverManager().install()),
                 options=edge_options
             )
             BaiduFanyi.EDGE_BROWSER = edge_browser
