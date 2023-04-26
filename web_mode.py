@@ -103,6 +103,7 @@ def submit_adding_note(n_clicks, word, us_phonetic, explanation):
     if word is None or word == '':
         return ''
     ak.add_note_from_web(word, us_phonetic, explanation)
+    ak.sync()
     return ''
 
 
