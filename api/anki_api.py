@@ -29,6 +29,11 @@ class Anki:
             raise UserWarning(f"Request fail: {response[Anki.RESPONSE_ERROR]}")
         return response[Anki.RESPONSE_RESULT]
 
+    def sync(self):
+        payload = copy.copy(self.default_payload)
+        payload.update({"action": "sync"})
+        return self._execute_action(payload)
+
     def get_deck_names_and_ids(self):
         payload = copy.copy(self.default_payload)
         payload.update({"action": "deckNamesAndIds"})
@@ -46,7 +51,7 @@ class Anki:
                     "单词": word,
                     "英音标": bf.uk_phonetic,
                     "美音标": bf.us_phonetic,
-                    "释义例句等详细内容": bf.definitions.replace('\n','<br>')
+                    "释义例句等详细内容": bf.definitions.replace('\n', '<br>')
                 },
                 "audio": [
                     {
@@ -56,6 +61,36 @@ class Anki:
                             "英音标"
                         ]
                     },
+                    {
+                        "url": f"http://dict.youdao.com/dictvoice?type=0&audio={word}",
+                        "filename": f"{word}_us.mp3",
+                        "fields": [
+                            "美音标"
+                        ]
+                    }
+                ]
+            }
+        }
+        payload.update({"params": params})
+        return self._execute_action(payload)
+
+    def add_note_from_web(self, word, us_phonetic, explanation):
+        payload = copy.copy(self.default_payload)
+        payload.update({"action": "addNote"})
+        params = {
+            "note": {
+                "deckName": "背单词",
+                "modelName": "新单词模板",
+                "fields": {
+                    "单词": word,
+                    "美音标": us_phonetic,
+                    "释义例句等详细内容": explanation.replace('\n', '<br>')
+                },
+                "options": {
+                    "allowDuplicate": False,
+                    "duplicateScope": "deck"
+                },
+                "audio": [
                     {
                         "url": f"http://dict.youdao.com/dictvoice?type=0&audio={word}",
                         "filename": f"{word}_us.mp3",

@@ -1,0 +1,21 @@
+.wild {
+    width: 100%;
+}
+
+.high {
+    height: 200px;
+}
+
+.word {
+    width: 226px;
+    margin-top: 10px;
+}
+
+button {
+    margin-left: 25px;
+    margin-right: 25px;
+}
+
+.red {
+    color: red;
+}
