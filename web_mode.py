@@ -116,5 +116,13 @@ def submit_adding_note(n_clicks, word, us_phonetic, explanation):
     return '', '', ''
 
 
+@app.callback(
+    Output('fill_content', 'disabled'),
+    Input('explanation', 'value')
+)
+def disable_new_before_submit(value):
+    return len(value) > 0
+
+
 if __name__ == '__main__':
     app.run_server(host='0.0.0.0', port=1130, debug=False)
