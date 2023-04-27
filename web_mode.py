@@ -62,6 +62,7 @@ def spell_check(n_clicks, explanation, source):
         explanation_check_result = ''
     else:
         explanation_check_result = spell.unknown(get_words(explanation))
+        explanation_check_result = [i for i in explanation_check_result if i not in ['adj']]
         if explanation_check_result:
             explanation_check_result = f"有拼写错误：{', '.join(explanation_check_result)}"
         else:
