@@ -98,6 +98,8 @@ def update_explanation(n_clicks, word):
 
 @app.callback(
     Output('word', 'value', allow_duplicate=True),
+    Output('explanation', 'value', allow_duplicate=True),
+    Output('source', 'value', allow_duplicate=True),
     Input('submit', 'n_clicks'),
     State('word', 'value'),
     State('us_phonetic', 'data'),
@@ -107,10 +109,10 @@ def update_explanation(n_clicks, word):
 def submit_adding_note(n_clicks, word, us_phonetic, explanation):
     print(f"word in submit_adding_note: {word}")
     if word is None or word == '':
-        return ''
+        return '', '', ''
     ak.add_note_from_web(word, us_phonetic, explanation)
     ak.sync()
-    return ''
+    return '', '', ''
 
 
 if __name__ == '__main__':
