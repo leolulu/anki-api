@@ -1,10 +1,14 @@
+import os
 import re
 from dash import Dash, html, dcc, Input, Output, State
 from spellchecker import SpellChecker
 from api.anki_api import Anki
+from utils.anki_initiator import init_anki
 
 from utils.dict_util import BaiduFanyi
 
+
+init_anki(os.environ.get('ANKI_PATH'))
 app = Dash(__name__)
 ak = Anki(port=18765)
 
@@ -38,7 +42,7 @@ app.layout = html.Div([
     Input('spell_check', 'n_clicks'),
     State('explanation', 'value'),
     State('source', 'value'),
-    prevent_initial_call = True
+    prevent_initial_call=True
 )
 def spell_check(n_clicks, explanation, source):
     source_check_result = ''
@@ -76,10 +80,10 @@ def spell_check(n_clicks, explanation, source):
 @app.callback(
     Output('explanation', 'value'),
     Output('us_phonetic', 'data'),
-    Output('word', 'value',allow_duplicate=True),
+    Output('word', 'value', allow_duplicate=True),
     Input('fill_content', 'n_clicks'),
     State('word', 'value'),
-    prevent_initial_call = True
+    prevent_initial_call=True
 )
 def update_explanation(n_clicks, word):
     word = word.strip().lower()
@@ -91,12 +95,12 @@ def update_explanation(n_clicks, word):
 
 
 @app.callback(
-    Output('word', 'value',allow_duplicate=True),
+    Output('word', 'value', allow_duplicate=True),
     Input('submit', 'n_clicks'),
     State('word', 'value'),
     State('us_phonetic', 'data'),
     State('explanation', 'value'),
-    prevent_initial_call = True
+    prevent_initial_call=True
 )
 def submit_adding_note(n_clicks, word, us_phonetic, explanation):
     print(f"word in submit_adding_note: {word}")
@@ -108,4 +112,4 @@ def submit_adding_note(n_clicks, word, us_phonetic, explanation):
 
 
 if __name__ == '__main__':
-    app.run_server(debug=True)
+    app.run_server(host='0.0.0.0', port=1130, debug=False)
