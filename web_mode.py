@@ -1,14 +1,15 @@
 import os
 import re
 from dash import Dash, html, dcc, Input, Output, State
+import psutil
 from spellchecker import SpellChecker
 from api.anki_api import Anki
 from utils.anki_initiator import init_anki
 
 from utils.dict_util import BaiduFanyi
 
-
-init_anki(os.environ.get('ANKI_PATH'))
+if not 'anki.exe' in [i.info['name'] for i in psutil.process_iter(['name'])]:  # type: ignore
+    init_anki(os.environ.get('ANKI_PATH'))
 app = Dash(__name__)
 app.title = 'Anki添加器'
 ak = Anki(port=18765)
