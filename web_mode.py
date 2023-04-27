@@ -122,7 +122,7 @@ def submit_adding_note(n_clicks, word, us_phonetic, explanation):
     Input('explanation', 'value')
 )
 def disable_new_before_submit(value):
-    if_has_content = len(value) > 0
+    if_has_content = True if value else False
     return if_has_content, not if_has_content
 
 
