@@ -118,10 +118,12 @@ def submit_adding_note(n_clicks, word, us_phonetic, explanation):
 
 @app.callback(
     Output('fill_content', 'disabled'),
+    Output('submit', 'disabled'),
     Input('explanation', 'value')
 )
 def disable_new_before_submit(value):
-    return len(value) > 0
+    if_has_content = len(value) > 0
+    return if_has_content, not if_has_content
 
 
 if __name__ == '__main__':
