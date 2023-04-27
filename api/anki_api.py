@@ -5,6 +5,7 @@ import requests
 import copy
 
 from utils.dict_util import BaiduFanyi
+from utils.highlight_word import highlight_word
 
 
 class Anki:
@@ -84,7 +85,7 @@ class Anki:
                 "fields": {
                     "单词": word,
                     "美音标": us_phonetic,
-                    "释义例句等详细内容": explanation.replace('\n', '<br>')
+                    "释义例句等详细内容": highlight_word(word, explanation).replace('\n', '<br>')
                 },
                 "options": {
                     "allowDuplicate": False,
