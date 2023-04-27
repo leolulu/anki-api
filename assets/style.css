@@ -19,3 +19,7 @@ button {
 .red {
     color: red;
 }
+
+textarea {
+    font-family: 'Microsoft YaHei';
+}

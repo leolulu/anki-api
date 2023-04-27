@@ -10,6 +10,7 @@ from utils.dict_util import BaiduFanyi
 
 init_anki(os.environ.get('ANKI_PATH'))
 app = Dash(__name__)
+app.title = 'Anki添加器'
 ak = Anki(port=18765)
 
 app.layout = html.Div([
