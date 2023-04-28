@@ -13,7 +13,7 @@ def monitor_exe_process(exe_path):
             print(f'Anki crashed，error code: {process.returncode}，restarting...')
         else:
             print('anki shutdown normally.')
-            break
+        time.sleep(5)
 
 
 def init_anki(anki_path):
