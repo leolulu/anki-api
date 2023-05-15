@@ -5,7 +5,8 @@ from selenium import webdriver
 from selenium.webdriver.edge.options import Options
 from selenium.webdriver.edge.service import Service
 from selenium.webdriver.edge.webdriver import WebDriver as EdgeWebDriver
-from webdriver_manager.microsoft import EdgeChromiumDriverManager
+
+from utils.load_driver import get_edge_driver
 
 
 class BaiduFanyi:
@@ -18,7 +19,7 @@ class BaiduFanyi:
             edge_options.add_argument('--headless')
             edge_options.add_argument('--disable-gpu')
             edge_browser = webdriver.Edge(
-                service=Service(EdgeChromiumDriverManager().install()),
+                service=Service(get_edge_driver()),
                 options=edge_options
             )
             BaiduFanyi.EDGE_BROWSER = edge_browser
