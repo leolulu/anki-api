@@ -1,5 +1,32 @@
 import time
+
+import requests
+from requests import Response
+from webdriver_manager.core.config import ssl_verify, wdm_progress_bar
+from webdriver_manager.core.download_manager import WDMDownloadManager
+from webdriver_manager.core.http import HttpClient
+from webdriver_manager.core.utils import show_download_progress
 from webdriver_manager.microsoft import EdgeChromiumDriverManager
+
+
+class MyHttpClientWithProxy(HttpClient):
+    def __init__(self):
+        super().__init__()
+
+    def get(self, url, params=None, **kwargs) -> Response:
+        try:
+            resp = requests.get(url=url, verify=ssl_verify(), stream=True, **kwargs)
+        except:
+            print("内置client下载失败，采用代理client下载...")
+            proxies = {
+                "http": "http://127.0.0.1:10809",
+                "https": "http://127.0.0.1:10809",
+            }
+            resp = requests.get(url=url, verify=ssl_verify(), stream=True, proxies=proxies, **kwargs)
+        self.validate_response(resp)
+        if wdm_progress_bar():
+            show_download_progress(resp)
+        return resp
 
 
 def get_edge_driver(retries=99, delay=1) -> str:
@@ -14,7 +41,7 @@ def get_edge_driver(retries=99, delay=1) -> str:
     driver = ""
     for i in range(retries):
         try:
-            driver = EdgeChromiumDriverManager().install()
+            driver = EdgeChromiumDriverManager(download_manager=WDMDownloadManager(http_client=MyHttpClientWithProxy())).install()
             break
         except:
             if i == retries:
