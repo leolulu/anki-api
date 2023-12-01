@@ -76,6 +76,8 @@ class Anki:
         return self._execute_action(payload)
 
     def add_note_from_web(self, word, us_phonetic, explanation, source):
+        if source is None:
+            source = ""
         payload = copy.copy(self.default_payload)
         payload.update({"action": "addNote"})
         params = {
