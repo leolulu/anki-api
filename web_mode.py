@@ -105,13 +105,14 @@ def fetch_explanation(n_clicks, word):
     State('word', 'value'),
     State('us_phonetic', 'data'),
     State('explanation', 'value'),
+    State('source', 'value'),
     prevent_initial_call=True
 )
-def submit_adding_note(n_clicks, word, us_phonetic, explanation):
+def submit_adding_note(n_clicks, word, us_phonetic, explanation, source):
     print(f"word in submit_adding_note: {word}")
     if word is None or word == '':
         return '', '', ''
-    ak.add_note_from_web(word, us_phonetic, explanation)
+    ak.add_note_from_web(word, us_phonetic, explanation, source)
     ak.sync()
     return '', '', ''
 

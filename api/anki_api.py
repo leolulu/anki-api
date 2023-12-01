@@ -75,7 +75,7 @@ class Anki:
         payload.update({"params": params})
         return self._execute_action(payload)
 
-    def add_note_from_web(self, word, us_phonetic, explanation):
+    def add_note_from_web(self, word, us_phonetic, explanation, source):
         payload = copy.copy(self.default_payload)
         payload.update({"action": "addNote"})
         params = {
@@ -85,7 +85,8 @@ class Anki:
                 "fields": {
                     "单词": word,
                     "美音标": us_phonetic,
-                    "释义例句等详细内容": highlight_word(word, explanation).replace('\n', '<br>')
+                    "释义例句等详细内容": highlight_word(word, explanation).replace('\n', '<br>'),
+                    "来源例句": source.replace('\n', '<br>')
                 },
                 "options": {
                     "allowDuplicate": False,
