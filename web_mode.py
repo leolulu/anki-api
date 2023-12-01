@@ -88,7 +88,7 @@ def spell_check(n_clicks, explanation, source):
     State('word', 'value'),
     prevent_initial_call=True
 )
-def update_explanation(n_clicks, word):
+def fetch_explanation(n_clicks, word):
     word = word.strip().lower()
     print(f"word in update_explanation: {word}")
     if word is None or word == '':
