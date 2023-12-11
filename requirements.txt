@@ -3,3 +3,4 @@ selenium
 dash
 pyspellchecker
 requests
+flask_cors
