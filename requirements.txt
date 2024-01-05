@@ -1,4 +1,4 @@
-webdriver-manager
+webdriver-manager==3.8.6
 selenium
 dash
 pyspellchecker
