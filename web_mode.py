@@ -14,6 +14,8 @@ app = Dash(__name__)
 app.title = 'Anki添加器'
 ak = Anki(port=18765)
 
+spell = SpellChecker()
+
 app.layout = html.Div([
     html.Div([
         html.Div([
@@ -56,7 +58,6 @@ def spell_check(n_clicks, explanation, source):
         words = [i for i in words if i != ""]
         return words
 
-    spell = SpellChecker()
 
     if explanation is None or explanation == '':
         explanation_check_result = ''
