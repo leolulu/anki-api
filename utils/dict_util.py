@@ -2,6 +2,7 @@ import time
 import traceback
 
 from selenium import webdriver
+from selenium.common.exceptions import ElementClickInterceptedException,NoSuchElementException
 from selenium.webdriver.edge.options import Options
 from selenium.webdriver.edge.service import Service
 from selenium.webdriver.edge.webdriver import WebDriver as EdgeWebDriver
@@ -24,10 +25,25 @@ class BaiduFanyi:
             )
             BaiduFanyi.EDGE_BROWSER = edge_browser
         self.edge_browser = BaiduFanyi.EDGE_BROWSER
+        self.goto_legacy_version()
         self.if_definitions_found = False
         self._get_phonetic(word)
         if self.if_definitions_found:
             self._get_definition()
+
+    def goto_legacy_version(self):
+        self.edge_browser.get(BaiduFanyi.URL.format(word="apple"))
+        xpath_legacy_changer = r"//span[text()='返回旧版']"
+        try:
+            self.edge_browser.find_element("xpath", xpath_legacy_changer)
+        except NoSuchElementException:
+            return
+        try:
+            self.edge_browser.find_element("xpath", xpath_legacy_changer).click()
+        except ElementClickInterceptedException:
+            self.edge_browser.refresh()
+            self.edge_browser.find_element("xpath", xpath_legacy_changer).click()
+            self.edge_browser.refresh()
 
     def close(self):
         if hasattr(BaiduFanyi, 'EDGE_BROWSER'):
