@@ -1,23 +1,26 @@
 import time
-from flask_cors import CORS
 
 from flask import Flask, request
+from flask_cors import CORS
 from selenium import webdriver
 from selenium.webdriver.edge.options import Options
 from selenium.webdriver.edge.service import Service
 
+from utils.dict_util import BaiduFanyi
 from utils.load_driver import get_edge_driver
 
 
-class BaiduFanyiVideoDetector:
+class BaiduFanyiVideoDetector(BaiduFanyi):
     def __init__(self) -> None:
         edge_options = Options()
         edge_options.add_argument("--headless")
         edge_options.add_argument("--disable-gpu")
         self.edge_browser = webdriver.Edge(service=Service(get_edge_driver()), options=edge_options)
+        self.goto_legacy_version()
 
     def detect_video(self, word) -> str:
         self.edge_browser.get(f"https://fanyi.baidu.com/?aldtype=85#en/zh/{word}")
+        self.edge_browser.refresh()
         retry_times = 5
 
         while True:
@@ -38,7 +41,7 @@ class BaiduFanyiVideoDetector:
         while True:
             try:
                 video_element = self.edge_browser.find_element("xpath", "//video[@class='query-video']")
-                video_src = video_element.get_attribute("src")
+                video_src = video_element.get_attribute("src") or "none"
                 break
             except Exception as e:
                 print(e)
@@ -54,7 +57,7 @@ Video_detector = BaiduFanyiVideoDetector()
 
 
 @app.route("/detect_video", methods=["POST"])
-def mark_video_watched():
+def detect_video_handler():
     payload = request.form
     word = payload["word"]
     video_url = Video_detector.detect_video(word.strip())
