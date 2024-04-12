@@ -22,7 +22,7 @@ class BaiduFanyiVideoDetector(BaiduFanyi):
     def detect_video(self, word) -> str:
         self.edge_browser.get(f"https://fanyi.baidu.com/?aldtype=85#en/zh/{word}")
         self.edge_browser.refresh()
-        retry_times = 5
+        retry_times = 10
 
         while True:
             try:
