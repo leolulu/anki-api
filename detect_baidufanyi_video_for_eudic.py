@@ -16,6 +16,7 @@ class BaiduFanyiVideoDetector(BaiduFanyi):
         edge_options.add_argument("--headless")
         edge_options.add_argument("--disable-gpu")
         self.edge_browser = webdriver.Edge(service=Service(get_edge_driver()), options=edge_options)
+        self.init_parameter()
         self.goto_legacy_version()
 
     def detect_video(self, word) -> str:
