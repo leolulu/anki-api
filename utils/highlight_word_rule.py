@@ -20,6 +20,7 @@ complex_rules = [
             lambda word: word[:-1] + "ily",
             lambda word: word[:-1] + "ier",
             lambda word: word[:-1] + "iest",
+            lambda word: word[:-1] + "ied",
         ],
     ],
     [
