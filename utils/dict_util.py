@@ -59,7 +59,7 @@ class BaiduFanyi:
     def _get_definition(self):
         definitions = [i.text for i in self.description_area_element.find_elements("xpath", self.xpath_actual_description_from_area)]
         definitions = [i.strip().replace("\n", " ").replace("；", "，") for i in definitions]
-        self.definitions = "\n".join(definitions)
+        self.definitions = "\n\n".join(definitions)
 
     def _get_phonetic(self, word):
         def format_phonetic(p):
