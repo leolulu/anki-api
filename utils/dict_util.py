@@ -1,11 +1,14 @@
+import re
 import time
 import traceback
+from typing import cast
 
 from selenium import webdriver
-from selenium.common.exceptions import ElementClickInterceptedException, NoSuchElementException
+from selenium.common.exceptions import NoSuchElementException
 from selenium.webdriver.edge.options import Options
 from selenium.webdriver.edge.service import Service
 from selenium.webdriver.edge.webdriver import WebDriver as EdgeWebDriver
+from selenium.webdriver.remote.webelement import WebElement
 
 from utils.load_driver import get_edge_driver
 
@@ -23,44 +26,39 @@ class BaiduFanyi:
             BaiduFanyi.EDGE_BROWSER = edge_browser
         self.edge_browser = BaiduFanyi.EDGE_BROWSER
         self.init_parameter()
-        self.goto_legacy_version()
         self.if_definitions_found = False
         self._get_phonetic(word)
         if self.if_definitions_found:
             self._get_definition()
+            self._detect_video_existence()
 
     def init_parameter(self):
-        self.xpath_dict_definition = r"//div[@class='dictionary-comment']/*"
-        self.xpath_phonetic_type = r"//label[@class='op-sound-wrap']/span"
-        self.xpath_phonetic_symbol = r"//label[@class='op-sound-wrap']/b"
-        self.xpath_dict_title = r"//div[@class='dictionary-title']/h3[@class='strong']"
-        self.xpath_legacy_changer = r"//span[text()='返回旧版']"
+        self.xpath_phonetic_symbol_us = r"//span[contains(text(), '美')]"
+        self.xpath_phonetic_symbol_uk = r"//span[contains(text(), '英')]"
+        self.xpath_description_area = r"../../../following-sibling::div"
+        self.xpath_actual_description_from_area = r"./div[1]/ul/li"
+        self.xpath_video_from_area = r"./div[2]"
+        self.reset_status()
 
-    def goto_legacy_version(self):
-        self.edge_browser.get(BaiduFanyi.URL.format(word="apple"))
-        try:
-            self.edge_browser.find_element("xpath", self.xpath_legacy_changer)
-        except NoSuchElementException:
-            return
-        try:
-            self.edge_browser.find_element("xpath", self.xpath_legacy_changer).click()
-        except ElementClickInterceptedException:
-            self.edge_browser.refresh()
-            for _ in range(10):
-                try:
-                    self.edge_browser.find_element("xpath", self.xpath_legacy_changer).click()
-                    break
-                except:
-                    time.sleep(1)
-            self.edge_browser.refresh()
+    def reset_status(self):
+        self.description_area_element = cast(WebElement, None)
+        self.video_element = cast(WebElement, None)
+        self.if_video_found = False
 
     def close(self):
         if hasattr(BaiduFanyi, "EDGE_BROWSER"):
             BaiduFanyi.EDGE_BROWSER.close()
 
+    def _detect_video_existence(self):
+        try:
+            self.video_element = self.description_area_element.find_element("xpath", self.xpath_video_from_area)
+            self.if_video_found = True
+        except NoSuchElementException:
+            return
+
     def _get_definition(self):
-        definitions = [i.text for i in self.edge_browser.find_elements("xpath", self.xpath_dict_definition)]
-        definitions = [i.strip().replace("\n", " ").replace(";", "，") for i in definitions]
+        definitions = [i.text for i in self.description_area_element.find_elements("xpath", self.xpath_actual_description_from_area)]
+        definitions = [i.strip().replace("\n", " ").replace("；", "，") for i in definitions]
         self.definitions = "\n".join(definitions)
 
     def _get_phonetic(self, word):
@@ -73,22 +71,18 @@ class BaiduFanyi:
             return p
 
         def parse_page():
-            types = [i.text for i in self.edge_browser.find_elements("xpath", self.xpath_phonetic_type)]
-            types = [i.replace(r"/", "").strip() for i in types]
-            phonetics = [i.text for i in self.edge_browser.find_elements("xpath", self.xpath_phonetic_symbol)]
-            phonetics = [format_phonetic(i) for i in phonetics]
-            return list(zip(types, phonetics))
-
-        def check_finish_loading(word):
-            dictionary_title_obj = self.edge_browser.find_elements("xpath", self.xpath_dict_title)
-            if len(dictionary_title_obj) > 0:
-                dictionary_title = dictionary_title_obj[0].text
-                if dictionary_title == word:
-                    return True
-                else:
-                    return False
-            else:
-                return False
+            phonetic_symbol_pattern = r"/(.*?)/"
+            phonetics = []
+            self.description_area_element = None
+            for xpath_phonetic_symbol in [self.xpath_phonetic_symbol_uk, self.xpath_phonetic_symbol_us]:
+                elements = self.edge_browser.find_elements("xpath", xpath_phonetic_symbol)
+                for elem in elements:
+                    if re.search(phonetic_symbol_pattern, elem.text):
+                        phonetics.append(format_phonetic(re.findall(phonetic_symbol_pattern, elem.text)[0]))
+                        if self.description_area_element is None:
+                            self.description_area_element = elem.find_element("xpath", self.xpath_description_area)
+                        break
+            return list(zip(["英", "美"], phonetics))
 
         try:
             self.edge_browser.get(BaiduFanyi.URL.format(word=word))
@@ -96,7 +90,7 @@ class BaiduFanyi:
             phonetics_info = []
             for _ in range(10):
                 phonetics_info = parse_page()
-                if (not check_finish_loading(word)) or (len(phonetics_info) == 0):
+                if len(phonetics_info) == 0:
                     time.sleep(1)
                 else:
                     break
