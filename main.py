@@ -1,6 +1,6 @@
 import subprocess
 import time
-from threading import Thread
+from multiprocessing import Process
 
 import psutil
 
@@ -28,7 +28,7 @@ def starter(env_var_name):
     path = read_user_environment_variable(env_var_name)
     if not path:
         path = set_user_environment_variable(env_var_name, input(f"请输入{program_names[env_var_name]}可执行文件路径:").strip().strip('"'))
-    Thread(target=lambda: subprocess.run([path])).start()
+    Process(target=subprocess.run, args=[[path]]).start()
 
 
 if __name__ == "__main__":
@@ -44,6 +44,8 @@ if __name__ == "__main__":
 
     while True:
         input_info = input(f'输入单词(输入"{DOWNLOAD_VOICE_PREFIX}"开头则只下载发音文件): ').strip().lower()
+        if not input_info:
+            continue
         if input_info.startswith(DOWNLOAD_VOICE_PREFIX):
             voice_to_download = input_info[len(DOWNLOAD_VOICE_PREFIX) :]
             print(f'\n下载"{voice_to_download}"的发音文件...\n')
