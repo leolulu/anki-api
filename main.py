@@ -49,4 +49,10 @@ if __name__ == "__main__":
             print(f'\n下载"{voice_to_download}"的发音文件...\n')
             download_us_voice(voice_to_download)
         else:
-            ak.add_card(input_info)
+            retry_times = 10
+            while retry_times > 0:
+                try:
+                    ak.add_card(input_info)
+                    break
+                except:
+                    retry_times -= 1
