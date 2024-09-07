@@ -88,10 +88,13 @@ class BaiduFanyi:
             self.edge_browser.get(BaiduFanyi.URL.format(word=word))
             self.edge_browser.refresh()
             phonetics_info = []
-            for _ in range(10):
+            retry_times = 10
+            for current_retry_time in range(retry_times):
                 phonetics_info = parse_page()
                 if len(phonetics_info) == 0:
-                    time.sleep(1)
+                    if current_retry_time == int(retry_times / 2):
+                        self.edge_browser.refresh()
+                    time.sleep(2)
                 else:
                     break
             self.uk_phonetic = "N/A"
