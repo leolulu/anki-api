@@ -28,7 +28,13 @@ def starter(env_var_name):
     path = read_user_environment_variable(env_var_name)
     if not path:
         path = set_user_environment_variable(env_var_name, input(f"请输入{program_names[env_var_name]}可执行文件路径:").strip().strip('"'))
-    Process(target=subprocess.run, args=[[path]]).start()
+
+    if env_var_name == ANKI_PATH:
+        cmd = ["start", "/b", path]
+    else:
+        cmd = [path]
+
+    Process(target=subprocess.Popen, args=[cmd], kwargs={"shell": True}).start()
 
 
 if __name__ == "__main__":
