@@ -21,4 +21,4 @@ def read_user_environment_variable(name):
     except:
         value = None
     winreg.CloseKey(key)
-    return str(value)
+    return value
