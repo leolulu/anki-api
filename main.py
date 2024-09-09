@@ -5,6 +5,7 @@ from multiprocessing import Process
 import psutil
 
 from api.anki_api import Anki
+from utils.dict_util import BaiduFanyi
 from utils.download_dictvoice import download_us_voice
 from utils.env_var_util import ANKI_PATH, LOGSEQ_PATH, read_user_environment_variable, set_user_environment_variable
 
@@ -44,6 +45,7 @@ if __name__ == "__main__":
     while True:
         try:
             ak = Anki(port=18765)
+            BaiduFanyi.init_edge_browser()
             break
         except:
             time.sleep(5)

@@ -1,6 +1,7 @@
 import re
 import time
 import traceback
+from threading import Thread
 from typing import cast
 
 from selenium import webdriver
@@ -16,14 +17,13 @@ from utils.load_driver import get_edge_driver
 class BaiduFanyi:
     EDGE_BROWSER: EdgeWebDriver
     URL = "https://fanyi.baidu.com/#en/zh/{word}"
+    STATUS_UNAVAILABLE = "unavailable"
+    STATUS_STARTING = "starting"
+    STATUS_READY = "ready"
+    STATUS = STATUS_UNAVAILABLE
 
     def __init__(self, word) -> None:
-        if not hasattr(BaiduFanyi, "EDGE_BROWSER"):
-            edge_options = Options()
-            edge_options.add_argument("--headless")
-            edge_options.add_argument("--disable-gpu")
-            edge_browser = webdriver.Edge(service=Service(get_edge_driver()), options=edge_options)
-            BaiduFanyi.EDGE_BROWSER = edge_browser
+        BaiduFanyi.init_edge_browser()
         self.edge_browser = BaiduFanyi.EDGE_BROWSER
         self.init_parameter()
         self.if_definitions_found = False
@@ -31,6 +31,24 @@ class BaiduFanyi:
         if self.if_definitions_found:
             self._get_definition()
             self._detect_video_existence()
+
+    @classmethod
+    def init_edge_browser(cls):
+        def _init():
+            cls.STATUS = cls.STATUS_STARTING
+            edge_options = Options()
+            edge_options.add_argument("--headless")
+            edge_options.add_argument("--disable-gpu")
+            edge_browser = webdriver.Edge(service=Service(get_edge_driver()), options=edge_options)
+            cls.EDGE_BROWSER = edge_browser
+            cls.STATUS = cls.STATUS_READY
+
+        if cls.STATUS == cls.STATUS_STARTING:
+            while cls.STATUS == cls.STATUS_STARTING:
+                time.sleep(1)
+
+        if not hasattr(cls, "EDGE_BROWSER"):
+            Thread(target=_init).start()
 
     def init_parameter(self):
         self.xpath_phonetic_symbol_us = r"//span[contains(text(), '美')]"

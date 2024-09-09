@@ -1,3 +1,4 @@
+import logging
 import time
 
 import requests
@@ -5,6 +6,7 @@ from requests import Response
 from webdriver_manager.core.config import ssl_verify, wdm_progress_bar
 from webdriver_manager.core.download_manager import WDMDownloadManager
 from webdriver_manager.core.http import HttpClient
+from webdriver_manager.core.logger import set_logger
 from webdriver_manager.core.utils import show_download_progress
 from webdriver_manager.microsoft import EdgeChromiumDriverManager
 
@@ -38,6 +40,7 @@ def get_edge_driver(retries=99, delay=1) -> str:
 
     :raises: WebDriverException if the driver cannot be installed after all retries.
     """
+    config_logger()
     driver = ""
     for i in range(retries):
         try:
@@ -50,3 +53,10 @@ def get_edge_driver(retries=99, delay=1) -> str:
             print("Download driver fail, Retrying...")
             time.sleep(delay)
     return driver
+
+
+def config_logger():
+    logger = logging.getLogger("MY_WDM")
+    logger.setLevel(logging.ERROR)
+    logger.addHandler(logging.StreamHandler())
+    set_logger(logger)
