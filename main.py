@@ -39,13 +39,13 @@ def starter(env_var_name):
 
 
 if __name__ == "__main__":
+    BaiduFanyi.init_edge_browser()
     starter(LOGSEQ_PATH)
     starter(ANKI_PATH)
 
     while True:
         try:
             ak = Anki(port=18765)
-            BaiduFanyi.init_edge_browser()
             break
         except:
             time.sleep(5)
