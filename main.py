@@ -14,8 +14,8 @@ DOWNLOAD_VOICE_PREFIX = ":"
 
 def starter(env_var_name):
     program_names = {
-        ANKI_PATH: "anki",
-        LOGSEQ_PATH: "logseq",
+        ANKI_PATH: "Anki",
+        LOGSEQ_PATH: "Logseq",
     }
     exe_names = {
         ANKI_PATH: "anki.exe",
@@ -23,8 +23,10 @@ def starter(env_var_name):
     }
 
     if exe_names[env_var_name] in [i.info["name"] for i in psutil.process_iter(["name"])]:
-        print(f"{exe_names[env_var_name]}在运行中，跳过启动过程...")
+        print(f"{program_names[env_var_name]}在运行中，跳过启动过程...")
         return
+    else:
+        print(f"开始启动{program_names[env_var_name]}...")
 
     path = read_user_environment_variable(env_var_name)
     if not path:
