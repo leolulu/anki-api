@@ -109,7 +109,9 @@ class BaiduFanyi:
             retry_times = 10
             for current_retry_time in range(retry_times):
                 phonetics_info = parse_page()
+                print(f"本次音标获取结果：{phonetics_info}")
                 if len(phonetics_info) == 0:
+                    print(f"重试，当前次数：{current_retry_time}")
                     if current_retry_time == int(retry_times / 2):
                         self.edge_browser.refresh()
                     time.sleep(2)
