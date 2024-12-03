@@ -1,6 +1,8 @@
+import os
 import subprocess
 import time
 from multiprocessing import Process
+from typing import Any, Dict
 
 import psutil
 
@@ -32,12 +34,17 @@ def starter(env_var_name):
     if not path:
         path = set_user_environment_variable(env_var_name, input(f"请输入{program_names[env_var_name]}可执行文件路径:").strip().strip('"'))
 
+    kwargs: Dict[str, Any] = {"shell": True}
     if env_var_name == ANKI_PATH:
         cmd = ["start", "/b", path]
+        anki_env = os.environ.copy()
+        anki_env["http_proxy"] = "http://127.0.0.1:10809"
+        anki_env["https_proxy"] = "http://127.0.0.1:10809"
+        kwargs["env"] = anki_env
     else:
         cmd = [path]
 
-    Process(target=subprocess.Popen, args=[cmd], kwargs={"shell": True}).start()
+    Process(target=subprocess.Popen, args=[cmd], kwargs=kwargs).start()
 
 
 if __name__ == "__main__":

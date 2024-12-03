@@ -4,3 +4,4 @@ dash
 pyspellchecker
 requests
 flask_cors
+psutil
