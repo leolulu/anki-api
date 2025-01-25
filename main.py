@@ -7,21 +7,22 @@ from typing import Any, Dict
 import psutil
 
 from api.anki_api import Anki
+from constants.env import ENV_VAR_ANKI_PATH, ENV_VAR_LOGSEQ_PATH, EXE_NAME_ANKI, EXE_NAME_LOGSEQ, PROGRAM_NAME_ANKI, PROGRAM_NAME_LOGSEQ
 from utils.dict_util import BaiduFanyi
 from utils.download_dictvoice import download_us_voice
-from utils.env_var_util import ANKI_PATH, LOGSEQ_PATH, read_user_environment_variable, set_user_environment_variable
+from utils.env_var_util import read_user_environment_variable, set_user_environment_variable
 
 DOWNLOAD_VOICE_PREFIX = ":"
 
 
 def starter(env_var_name):
     program_names = {
-        ANKI_PATH: "Anki",
-        LOGSEQ_PATH: "Logseq",
+        ENV_VAR_ANKI_PATH: PROGRAM_NAME_ANKI,
+        ENV_VAR_LOGSEQ_PATH: PROGRAM_NAME_LOGSEQ,
     }
     exe_names = {
-        ANKI_PATH: "anki.exe",
-        LOGSEQ_PATH: "Logseq.exe",
+        ENV_VAR_ANKI_PATH: EXE_NAME_ANKI,
+        ENV_VAR_LOGSEQ_PATH: EXE_NAME_LOGSEQ,
     }
 
     if exe_names[env_var_name] in [i.info["name"] for i in psutil.process_iter(["name"])]:
@@ -35,7 +36,7 @@ def starter(env_var_name):
         path = set_user_environment_variable(env_var_name, input(f"请输入{program_names[env_var_name]}可执行文件路径:").strip().strip('"'))
 
     kwargs: Dict[str, Any] = {"shell": True}
-    if env_var_name == ANKI_PATH:
+    if env_var_name == ENV_VAR_ANKI_PATH:
         cmd = ["start", "/b", path]
         anki_env = os.environ.copy()
         anki_env["http_proxy"] = "http://127.0.0.1:10809"
@@ -49,8 +50,8 @@ def starter(env_var_name):
 
 if __name__ == "__main__":
     BaiduFanyi.init_edge_browser()
-    starter(LOGSEQ_PATH)
-    starter(ANKI_PATH)
+    starter(ENV_VAR_LOGSEQ_PATH)
+    starter(ENV_VAR_ANKI_PATH)
 
     while True:
         try:

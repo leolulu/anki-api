@@ -1,18 +1,36 @@
-import os
 import re
-from dash import Dash, html, dcc, Input, Output, State
+from time import sleep
+from urllib.parse import unquote
+
 import psutil
+from dash import Dash, Input, Output, State, dcc, html
 from spellchecker import SpellChecker
+
 from api.anki_api import Anki
-from utils.anki_initiator import init_anki
-
+from constants.env import ENV_VAR_ANKI_PATH, EXE_NAME_ANKI, PROGRAM_NAME_ANKI
+from utils.anki_initiator import AnkiProcess, init_anki
 from utils.dict_util import BaiduFanyi
+from utils.env_var_util import read_user_environment_variable, set_user_environment_variable
+from utils.gen_exp_by_doubao import get_explanation_by_doubao
 
-if not "anki.exe" in [i.info["name"] for i in psutil.process_iter(["name"])]:  # type: ignore
-    init_anki(os.environ.get("ANKI_PATH"))
+BaiduFanyi.init_edge_browser()
+
+
+def start_anki(actually_start=True):
+    path = read_user_environment_variable(ENV_VAR_ANKI_PATH)
+    if not path:
+        path = set_user_environment_variable(ENV_VAR_ANKI_PATH, input(f"请输入{PROGRAM_NAME_ANKI}可执行文件路径:").strip().strip('"'))
+    if actually_start:
+        if not EXE_NAME_ANKI in [i.info["name"] for i in psutil.process_iter(["name"])]:
+            init_anki(path)
+
+
+start_anki(actually_start=False)
+
+
 app = Dash(__name__)
 app.title = "Anki添加器"
-ak = Anki(port=18765)
+
 
 spell = SpellChecker()
 
@@ -30,13 +48,14 @@ app.layout = html.Div(
                 ),
                 html.Div(dcc.Input(type="text", className="word", id="word")),
                 html.Div([html.Label("释义例句等详细内容："), html.Label(id="explanation_check_result", className="red")]),
-                html.Div(dcc.Textarea(className="wild high", id="explanation")),
+                html.Div(dcc.Textarea(className="wild triple-high", id="explanation")),
                 html.Div([html.Label("来源例句："), html.Label(id="source_check_result", className="red")]),
                 html.Div(dcc.Textarea(className="wild high", id="source")),
                 dcc.Store(id="us_phonetic"),
             ],
             className="container",
-        )
+        ),
+        dcc.Location(id="url"),
     ]
 )
 
@@ -95,7 +114,25 @@ def fetch_explanation(n_clicks, word):
     if word is None or word == "":
         return "", "", ""
     bf = BaiduFanyi(word)
-    return bf.definitions, bf.us_phonetic, word
+    # return bf.definitions, bf.us_phonetic, word
+    return get_explanation_by_doubao(word), bf.us_phonetic, word
+
+
+@app.callback(
+    Output("word", "value"),
+    Output("fill_content", "n_clicks"),
+    Input("url", "search"),
+    State("fill_content", "n_clicks"),
+)
+def gen_content_from_url_params(search_string, n_clicks):
+    if not search_string:
+        return
+    for param_pair in search_string.replace("?", "").split("&"):
+        key, value = param_pair.split("=")
+        key = unquote(key)
+        value = unquote(value)
+        if key == "word":
+            return value, (0 if not n_clicks else n_clicks) + 1
 
 
 @app.callback(
@@ -113,8 +150,14 @@ def submit_adding_note(n_clicks, word, us_phonetic, explanation, source):
     print(f"word in submit_adding_note: {word}")
     if word is None or word == "":
         return "", "", ""
+    start_anki()
+    ak = Anki(port=18765)
+    while not "背单词" in ak.get_deck_names_and_ids():
+        sleep(1)
     ak.add_note_from_web(word, us_phonetic, explanation, source)
     ak.sync()
+    ak.exit()
+    AnkiProcess.terminate()
     return "", "", ""
 
 

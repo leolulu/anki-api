@@ -1,9 +1,6 @@
 import os
 import winreg
 
-ANKI_PATH = "MY_ANKI_PATH"
-LOGSEQ_PATH = "MY_LOGSEQ_PATH"
-
 
 def set_user_environment_variable(name, value):
     key = winreg.OpenKey(winreg.HKEY_CURRENT_USER, "Environment", 0, winreg.KEY_ALL_ACCESS)

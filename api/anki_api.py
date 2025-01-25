@@ -18,9 +18,7 @@ class Anki:
 
     def _build_default_payload(self):
         version = int(requests.post(self.endpoint, data='{"action": "version"}').content)
-        self.default_payload: Dict[str, Any] = {
-            "version": version
-        }
+        self.default_payload: Dict[str, Any] = {"version": version}
 
     def _execute_action(self, payload: dict):
         r = requests.post(self.endpoint, data=json.dumps(payload))
@@ -33,6 +31,12 @@ class Anki:
     def sync(self):
         payload = copy.copy(self.default_payload)
         payload.update({"action": "sync"})
+        return self._execute_action(payload)
+
+    def exit(self):
+        # 不起作用，不要用
+        payload = copy.copy(self.default_payload)
+        payload.update({"action": "guiExitAnki"})
         return self._execute_action(payload)
 
     def get_deck_names_and_ids(self):
@@ -52,24 +56,24 @@ class Anki:
                     "单词": word,
                     "英音标": bf.uk_phonetic,
                     "美音标": bf.us_phonetic,
-                    "释义例句等详细内容": bf.definitions.replace('\n', '<br>')
+                    "释义例句等详细内容": bf.definitions.replace("\n", "<br>"),
                 },
                 "audio": [
                     {
                         "url": f"http://dict.youdao.com/dictvoice?type=1&audio={word}",
                         "filename": f"{word}_uk.mp3",
                         "fields": [
-                            "英音标"
-                        ]
+                            "英音标",
+                        ],
                     },
                     {
                         "url": f"http://dict.youdao.com/dictvoice?type=0&audio={word}",
                         "filename": f"{word}_us.mp3",
                         "fields": [
-                            "美音标"
-                        ]
-                    }
-                ]
+                            "美音标",
+                        ],
+                    },
+                ],
             }
         }
         payload.update({"params": params})
@@ -87,28 +91,28 @@ class Anki:
                 "fields": {
                     "单词": word,
                     "美音标": us_phonetic,
-                    "释义例句等详细内容": highlight_word(word, explanation).replace('\n', '<br>'),
-                    "来源例句": source.replace('\n', '<br>')
+                    "释义例句等详细内容": highlight_word(word, explanation).replace("\n", "<br>"),
+                    "来源例句": source.replace("\n", "<br>"),
                 },
                 "options": {
                     "allowDuplicate": False,
-                    "duplicateScope": "deck"
+                    "duplicateScope": "deck",
                 },
                 "audio": [
                     {
                         "url": f"http://dict.youdao.com/dictvoice?type=0&audio={word}",
                         "filename": f"{word}_us.mp3",
                         "fields": [
-                            "美音标"
-                        ]
+                            "美音标",
+                        ],
                     }
-                ]
+                ],
             }
         }
         payload.update({"params": params})
         return self._execute_action(payload)
 
 
-if __name__ == '__main__':
+if __name__ == "__main__":
     ak = Anki(port=18765)
-    print(ak.add_card('apple'))
+    print(ak.add_card("apple"))
