@@ -13,7 +13,9 @@ from utils.dict_util import BaiduFanyi
 from utils.env_var_util import read_user_environment_variable, set_user_environment_variable
 from utils.gen_exp_by_doubao import get_explanation_by_doubao
 
+
 BaiduFanyi.init_edge_browser()
+spell = SpellChecker()
 
 
 def start_anki(actually_start=True):
@@ -30,10 +32,6 @@ start_anki(actually_start=False)
 
 app = Dash(__name__)
 app.title = "Anki添加器"
-
-
-spell = SpellChecker()
-
 app.layout = html.Div(
     [
         html.Div(
