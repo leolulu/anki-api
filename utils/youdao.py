@@ -25,7 +25,7 @@ def get_phonetic_by_bing(word):
 
 def get_phonetic(word):
     if result := get_phonetic_by_youdao(word):
-        return result
+        return f"美[{result}]"
     if result := get_phonetic_by_bing(word):
-        return result
+        return f"美[{result}]"
     return "空"
