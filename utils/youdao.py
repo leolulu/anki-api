@@ -9,7 +9,6 @@ def get_phonetic_by_youdao(word):
         if "美" in i:
             for i in re.findall(r"phonetic.*?span", i):
                 for i in re.findall(r"/(.*?)/", i):
-                    print("取到美音标：", i)
                     return i.strip()
     return None
 
@@ -18,7 +17,6 @@ def get_phonetic_by_bing(word):
     url = "https://cn.bing.com/dict/search?q={word}"
     res = requests.get(url.format(word=word))
     for i in re.findall(r"美.*?\[(.*?)\]", res.text):
-        print("取到美音标：", i)
         return i.strip()
     return None
 
