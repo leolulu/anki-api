@@ -124,7 +124,7 @@ def fetch_explanation(n_clicks, word):
 )
 def gen_content_from_url_params(search_string, n_clicks):
     if not search_string:
-        return
+        return "", 0
     for param_pair in search_string.replace("?", "").split("&"):
         key, value = param_pair.split("=")
         key = unquote(key)
