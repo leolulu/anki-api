@@ -12,6 +12,7 @@ from utils.anki_initiator import AnkiProcess, init_anki
 from utils.dict_util import BaiduFanyi
 from utils.env_var_util import read_user_environment_variable, set_user_environment_variable
 from utils.gen_exp_by_doubao import get_explanation_by_doubao
+from utils.youdao import get_phonetic_by_youdao
 
 
 BaiduFanyi.init_edge_browser()
@@ -111,9 +112,9 @@ def fetch_explanation(n_clicks, word):
     print(f"word in update_explanation: {word}")
     if word is None or word == "":
         return "", "", ""
-    bf = BaiduFanyi(word)
+    # bf = BaiduFanyi(word)
     # return bf.definitions, bf.us_phonetic, word
-    return get_explanation_by_doubao(word), bf.us_phonetic, word
+    return get_explanation_by_doubao(word), get_phonetic_by_youdao(word), word
 
 
 @app.callback(
