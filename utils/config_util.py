@@ -9,7 +9,7 @@ def get_or_create_config(key):
     if not os.path.exists(config_path):
         value = ""
         while not value:
-            value = input("Please input the value of the key:").strip().strip('"')
+            value = input(f'Please input the value of the "{key}":').strip().strip('"')
         with open(config_path, "w", encoding="utf-8") as f:
             f.write(value)
     else:
