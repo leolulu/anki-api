@@ -2,7 +2,10 @@ import os
 
 
 def get_or_create_config(key):
-    config_path = os.path.join("configs", key)
+    config_folder = "configs"
+    if not os.path.exists(config_folder):
+        os.mkdir(config_folder)
+    config_path = os.path.join(config_folder, key)
     if not os.path.exists(config_path):
         value = ""
         while not value:
