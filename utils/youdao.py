@@ -7,8 +7,8 @@ def get_phonetic_by_youdao(word):
     res = requests.get(url.format(word=word))
     for i in re.findall(f"per-phone.*?点击发音", res.text):
         if "美" in i:
-            print(i)
             for i in re.findall(r"phonetic.*?span", i):
                 for i in re.findall(r"/(.*?)/", i):
+                    print("取到美音标：", i)
                     return i.strip()
     return "空"
