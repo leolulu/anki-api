@@ -9,13 +9,13 @@ from spellchecker import SpellChecker
 from api.anki_api import Anki
 from constants.env import ENV_VAR_ANKI_PATH, EXE_NAME_ANKI, PROGRAM_NAME_ANKI
 from utils.anki_initiator import AnkiProcess, init_anki
-from utils.dict_util import BaiduFanyi
+# from utils.dict_util import BaiduFanyi
 from utils.env_var_util import read_user_environment_variable, set_user_environment_variable
 from utils.gen_exp_by_doubao import get_explanation_by_doubao
 from utils.youdao import get_phonetic_by_youdao
 
 
-BaiduFanyi.init_edge_browser()
+# BaiduFanyi.init_edge_browser()
 spell = SpellChecker()
 
 
