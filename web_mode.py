@@ -11,6 +11,7 @@ from constants.env import ENV_VAR_ANKI_PATH, EXE_NAME_ANKI, PROGRAM_NAME_ANKI
 from utils.anki_initiator import AnkiProcess, init_anki
 from utils.dict_util import BaiduFanyi
 from utils.env_var_util import read_user_environment_variable, set_user_environment_variable
+from utils.format_util import format_explanation
 from utils.gen_exp_by_doubao import get_explanation_by_doubao
 
 BaiduFanyi.init_edge_browser()
@@ -154,7 +155,7 @@ def submit_adding_note(n_clicks, word, us_phonetic, explanation, source):
     ak = Anki(port=18765)
     while not "背单词" in ak.get_deck_names_and_ids():
         sleep(1)
-    ak.add_note_from_web(word, us_phonetic, explanation, source)
+    ak.add_note_from_web(word, us_phonetic, format_explanation(explanation, word), source)
     ak.sync()
     ak.exit()
     AnkiProcess.terminate()
