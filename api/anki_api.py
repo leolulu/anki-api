@@ -92,7 +92,7 @@ class Anki:
                     "单词": word,
                     "美音标": us_phonetic,
                     "释义例句等详细内容": highlight_word(word, explanation).replace("\n", "<br>"),
-                    "来源例句": source.replace("\n", "<br>"),
+                    "来源例句": highlight_word(word, source, "font-weight: bold;").replace("\n", "<br>"),
                 },
                 "options": {
                     "allowDuplicate": False,

@@ -14,7 +14,9 @@ from utils.env_var_util import read_user_environment_variable, set_user_environm
 from utils.format_util import format_explanation
 from utils.gen_exp_by_doubao import get_explanation_by_doubao
 
+
 BaiduFanyi.init_edge_browser()
+spell = SpellChecker()
 
 
 def start_anki(actually_start=True):
@@ -31,10 +33,6 @@ start_anki(actually_start=False)
 
 app = Dash(__name__)
 app.title = "Anki添加器"
-
-
-spell = SpellChecker()
-
 app.layout = html.Div(
     [
         html.Div(
@@ -127,7 +125,7 @@ def fetch_explanation(n_clicks, word):
 )
 def gen_content_from_url_params(search_string, n_clicks):
     if not search_string:
-        return
+        return "", 0
     for param_pair in search_string.replace("?", "").split("&"):
         key, value = param_pair.split("=")
         key = unquote(key)

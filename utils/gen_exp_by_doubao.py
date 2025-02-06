@@ -2,6 +2,8 @@ import textwrap
 
 import requests
 
+from utils.config_util import get_or_create_config
+
 system_message = "你是一个背单词的flashcard的生成器，专业效果的那种，你会仔细分析用户的要求，然后完美地生成用户所需要的背单词卡片的内容"
 user_message = textwrap.dedent(
     """
@@ -36,7 +38,7 @@ The ship's bell tolled mournfully as we mourned the loss of our crewmates.
 
 
 def get_explanation_by_doubao(word):
-    url = "http://localhost:1131/"
+    url = get_or_create_config("doubao_endpoint")
     payload = {"system_message": system_message, "user_message": user_message.format(word=word)}
     res = requests.post(url, json=payload)
     res.raise_for_status()
