@@ -13,7 +13,7 @@ from utils.config_util import get_or_create_config
 from utils.gen_exp_by_doubao import get_explanation_by_doubao
 from utils.phonetic_util import get_phonetic
 
-# BaiduFanyi.init_edge_browser()
+
 spell = SpellChecker()
 
 
