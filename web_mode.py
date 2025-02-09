@@ -10,12 +10,9 @@ from api.anki_api import Anki
 from constants.env import EXE_NAME_ANKI
 from utils.anki_initiator import AnkiProcess, init_anki
 from utils.config_util import get_or_create_config
-from utils.dict_util import BaiduFanyi
-from utils.env_var_util import read_user_environment_variable, set_user_environment_variable
 from utils.format_util import format_explanation
 from utils.gen_exp_by_doubao import get_explanation_by_doubao
 from utils.phonetic_util import get_phonetic
-
 
 spell = SpellChecker()
 
