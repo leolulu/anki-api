@@ -56,6 +56,7 @@ def get_explanation_by_doubao(word):
 
 
 def _post_process_explanation(exp):
+    exp = exp.replace("：", ':')
     exp = exp.replace("“", '"')
     exp = exp.replace("”", '"')
     exp = exp.replace(' "', '"')
