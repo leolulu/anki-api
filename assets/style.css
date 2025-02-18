@@ -26,11 +26,3 @@ button {
 textarea {
     font-family: 'Microsoft YaHei';
 }
-
-@media screen and (min-width: 1024px) {
-    body {
-        transform: scale(1.5);
-        transform-origin: 0 0;
-        width: 64%;
-    }
-}
