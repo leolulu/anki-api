@@ -13,19 +13,24 @@ user_message = textwrap.dedent(
 n. (道路、桥梁的)通行费
 motorway tolls
 a toll road/bridge
+Tolls are now collected electronically on most motorways.
 伤亡人数
 The official death toll has now reached 7000.
 the war's growing casualty toll
+Independent sources say that the death toll from the earthquake runs into thousands.
 代价
 Years of smoking have taken their toll on his health.
 a heavy toll on the environment
+The recession then took a heavy toll on the rich.
 
 v. （钟）鸣响
 In the distance, a church bell tolled the hour.
 The ship's bell tolled mournfully as we mourned the loss of our crewmates.
+Church bells tolled as people gathered for the service.
 征收
 The bridge is tolled during peak hours.
 Motorists are tolled when they enter the city.
+They decided to toll the new highway to cover construction costs.
 
 
 "chime"的声音更加轻快、悦耳且可能具有旋律性
@@ -40,6 +45,7 @@ Motorists are tolled when they enter the city.
 词性标识中的动词尤其要区分vt./vi.，不能统写为v.
 例句要能充分表达这个词的内涵和使用方法，不要类似于 'this is 某个名词' 'sth. is 某个形容词' 这样的对于学习理解几乎没用的
 如果一个词有很多含义，给出常用的含义就行，太生僻的不用
+每部分的例句都是三个
 近义词区分部分不是必要的，除非这个词有在日常使用中容易搞混的近义词
 
 好的，在充分理解规则以后，我们现在就开始。请给出“{word}”这个词的flashcard
