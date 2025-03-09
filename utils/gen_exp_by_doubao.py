@@ -13,16 +13,13 @@ user_message = textwrap.dedent(
 n. (道路、桥梁的)通行费
 motorway tolls
 a toll road/bridge
-Tolls are now collected electronically on most motorways.
 伤亡人数
 The official death toll has now reached 7000.
 the war's growing casualty toll
-Independent sources say that the death toll from the earthquake runs into thousands.
 
 v. （钟）鸣响
 In the distance, a church bell tolled the hour.
 The ship's bell tolled mournfully as we mourned the loss of our crewmates.
-Church bells tolled as people gathered for the service.
 
 
 "chime"的声音更加轻快、悦耳且可能具有旋律性
@@ -31,7 +28,7 @@ Church bells tolled as people gathered for the service.
 我来详细解释格式：
 先列出这个单词的不同词性，用诸如n./vi./vt./adj./adv.等简写表示，这个表示法一个词性只用出现一次，其后写出简要中文意思，不同词性间用一个空行隔开。
 中文解释的部分格式限定在只有一行，不要换行和多行。这个中文解释尽可能简短，不要出现长句。同一个词性的不同意思之间不要空行。在含义中不要使用分号，用逗号就行。
-紧接着给出三个有代表性的纯英语例句，相同含义和其例句之间没有空行。
+紧接着给出两个有代表性的纯英语例句，相同含义和其例句之间没有空行。
 如果一个词有很多含义，给出常用的含义就行，太生僻的不用。
 最后，如果这个词有十分相近的近义词，那么就像范例一样的格式给出区别的解释。近义词区分部分不要直接给出一整段话，每个词单独一行，词在最开头，用半角双引号括起来。这整个部分和前面的部分之间用两个空行隔开。
 
