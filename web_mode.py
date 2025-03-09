@@ -7,22 +7,22 @@ from dash import Dash, Input, Output, State, dcc, html
 from spellchecker import SpellChecker
 
 from api.anki_api import Anki
-from constants.env import ENV_VAR_ANKI_PATH, EXE_NAME_ANKI, PROGRAM_NAME_ANKI
+from constants.env import EXE_NAME_ANKI
 from utils.anki_initiator import AnkiProcess, init_anki
-from utils.dict_util import BaiduFanyi
-from utils.env_var_util import read_user_environment_variable, set_user_environment_variable
+from utils.config_util import get_or_create_config
 from utils.format_util import format_explanation
 from utils.gen_exp_by_doubao import get_explanation_by_doubao
+from utils.phonetic_util import get_phonetic
 
-
-BaiduFanyi.init_edge_browser()
 spell = SpellChecker()
 
 
 def start_anki(actually_start=True):
-    path = read_user_environment_variable(ENV_VAR_ANKI_PATH)
-    if not path:
-        path = set_user_environment_variable(ENV_VAR_ANKI_PATH, input(f"请输入{PROGRAM_NAME_ANKI}可执行文件路径:").strip().strip('"'))
+    # 取消通过环境变量设置Anki路径的方式，因为可能运行时不是相同用户，导致无法正常存储和读取环境变量
+    # path = read_user_environment_variable(ENV_VAR_ANKI_PATH)
+    # if not path:
+    #     path = set_user_environment_variable(ENV_VAR_ANKI_PATH, input(f"请输入{PROGRAM_NAME_ANKI}可执行文件路径:").strip().strip('"'))
+    path = get_or_create_config("anki_path")
     if actually_start:
         if not EXE_NAME_ANKI in [i.info["name"] for i in psutil.process_iter(["name"])]:
             init_anki(path)
@@ -112,9 +112,7 @@ def fetch_explanation(n_clicks, word):
     print(f"word in update_explanation: {word}")
     if word is None or word == "":
         return "", "", ""
-    bf = BaiduFanyi(word)
-    # return bf.definitions, bf.us_phonetic, word
-    return get_explanation_by_doubao(word), bf.us_phonetic, word
+    return get_explanation_by_doubao(word), get_phonetic(word), word
 
 
 @app.callback(
