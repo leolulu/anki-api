@@ -1,8 +1,8 @@
+import copy
 import json
 from typing import Any, Dict
-import requests
 
-import copy
+import requests
 
 from utils.dict_util import BaiduFanyi
 from utils.highlight_word import highlight_word
@@ -43,6 +43,29 @@ class Anki:
         payload = copy.copy(self.default_payload)
         payload.update({"action": "deckNamesAndIds"})
         return self._execute_action(payload)
+
+    def find_notes(self, search_content: str):
+        payload = copy.copy(self.default_payload)
+        payload.update({"action": "findNotes"})
+        payload.update({"params": {"query": search_content}})
+        return self._execute_action(payload)
+
+    def get_notes_info(self, note_ids_or_note_content: list[int] | str):
+        payload = copy.copy(self.default_payload)
+        payload.update({"action": "notesInfo"})
+
+        if isinstance(note_ids_or_note_content, list):
+            payload.update({"params": {"notes": note_ids_or_note_content}})
+        elif isinstance(note_ids_or_note_content, str):
+            payload.update({"params": {"query": note_ids_or_note_content}})
+        else:
+            raise ValueError(f"Invalid type: {type(note_ids_or_note_content)}, must be list[int] or str.")
+
+        return self._execute_action(payload)
+
+    def search_answer_content(self, search_content: str):
+        notes_info = self.get_notes_info(search_content)
+        return {info["noteId"]: info["fields"]["答案"]["value"] for info in notes_info} # TODO 这里需要适配老的格式，直接使用“答案”会出问题
 
     def add_card(self, word):
         payload = copy.copy(self.default_payload)
