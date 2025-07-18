@@ -5,3 +5,4 @@ pyspellchecker
 requests
 flask_cors
 psutil
+flask

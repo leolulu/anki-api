@@ -65,7 +65,11 @@ class Anki:
 
     def search_answer_content(self, search_content: str):
         notes_info = self.get_notes_info(search_content)
-        return {info["noteId"]: info["fields"]["答案"]["value"] for info in notes_info} # TODO 这里需要适配老的格式，直接使用“答案”会出问题
+        result = []
+        for info in notes_info:
+            if "fields" in info and "答案" in info["fields"]:
+                result.append({"id": info["noteId"], "content": info["fields"]["答案"]["value"]})
+        return result
 
     def add_card(self, word):
         payload = copy.copy(self.default_payload)

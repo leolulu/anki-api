@@ -1,13 +1,16 @@
 import re
+from dataclasses import asdict
 from time import sleep
 from urllib.parse import unquote
 
 import psutil
 from dash import Dash, Input, Output, State, dcc, html
+from flask import jsonify, request
 from spellchecker import SpellChecker
 
 from api.anki_api import Anki
 from constants.env import EXE_NAME_ANKI
+from models.type import SearchResult
 from utils.anki_initiator import AnkiProcess, init_anki
 from utils.config_util import get_or_create_config
 from utils.format_util import format_explanation
@@ -26,6 +29,8 @@ def start_anki(actually_start=True):
     if actually_start:
         if not EXE_NAME_ANKI in [i.info["name"] for i in psutil.process_iter(["name"])]:
             init_anki(path)
+        else:
+            print("Anki已经在运行中，跳过启动环节...")
 
 
 start_anki(actually_start=False)
@@ -168,5 +173,18 @@ def disable_new_before_submit(value):
     return if_has_content, not if_has_content
 
 
+@app.server.route("/search_user_query", methods=["GET"])
+def search_user_query():
+    start_anki()
+    ak = Anki(port=18765)
+    return_result = []
+    for result in ak.search_answer_content(r"re:" + r"\?\?\?.+?\?\?\?"):
+        content = result["content"]
+        queries = re.findall(r"\?\?\?(.+?)\?\?\?", content)
+        for query in [q for q in queries if "<br>" not in q]:
+            return_result.append(asdict(SearchResult(result["id"], query)))
+    return jsonify(return_result)
+
+
 if __name__ == "__main__":
-    app.run_server(host="0.0.0.0", port=1130, debug=False)
+    app.run(host="0.0.0.0", port=1130, debug=False)
