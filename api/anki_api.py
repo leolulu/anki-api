@@ -63,6 +63,22 @@ class Anki:
 
         return self._execute_action(payload)
 
+    def update_note_fields(self, note_id: int, field_and_contents: dict):
+        """
+        修改已存在笔记的字段内容
+
+        Args:
+            note_id: note的id
+            field_and_contents: 要更新的字段和内容，格式为 {"field名": "新内容", ...}
+
+        Returns:
+            API返回结果
+        """
+        payload = copy.copy(self.default_payload)
+        payload.update({"action": "updateNoteFields"})
+        payload.update({"params": {"note": {"id": note_id, "fields": field_and_contents}}})
+        return self._execute_action(payload)
+
     def search_answer_content(self, search_content: str):
         notes_info = self.get_notes_info(search_content)
         result = []
@@ -120,6 +136,39 @@ class Anki:
                     "美音标": us_phonetic,
                     "释义例句等详细内容": highlight_word(word, explanation).replace("\n", "<br>"),
                     "来源例句": highlight_word(word, source, "font-weight: bold;").replace("\n", "<br>"),
+                },
+                "options": {
+                    "allowDuplicate": False,
+                    "duplicateScope": "deck",
+                },
+                "audio": [
+                    {
+                        "url": f"http://dict.youdao.com/dictvoice?type=0&audio={word}",
+                        "filename": f"{word}_us.mp3",
+                        "fields": [
+                            "美音标",
+                        ],
+                    }
+                ],
+            }
+        }
+        payload.update({"params": params})
+        return self._execute_action(payload)
+
+    def add_note_second_mode(self, word, us_phonetic, explanation, source=None):
+        if source is None:
+            source = ""
+        payload = copy.copy(self.default_payload)
+        payload.update({"action": "addNote"})
+        params = {
+            "note": {
+                "deckName": "自动添加的初见单词",
+                "modelName": "问答题自己的左对齐+来源",
+                "fields": {
+                    "问题": word,
+                    "答案": highlight_word(word, explanation).replace("\n", "<br>"),
+                    "美音标": us_phonetic,
+                    "来源": highlight_word(word, source, "font-weight: bold;").replace("\n", "<br>"),
                 },
                 "options": {
                     "allowDuplicate": False,

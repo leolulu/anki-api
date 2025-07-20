@@ -1,12 +1,13 @@
 import json
-import requests
 import re
+
+import requests
 
 
 def get_phonetic_by_youdao(word):
     url = "https://www.youdao.com/result?word={word}&lang=en"
     res = requests.get(url.format(word=word))
-    for i in re.findall(f"per-phone.*?点击发音", res.text):
+    for i in re.findall("per-phone.*?点击发音", res.text):
         if "美" in i:
             for i in re.findall(r"phonetic.*?span", i):
                 for i in re.findall(r"/(.*?)/", i):
@@ -37,7 +38,7 @@ def get_phonetic_by_baidu(word):
                             if json_data["data"]["message"] == "获取词典成功":
                                 for symbol in json_data["data"]["dictResult"]["simple_means"]["symbols"]:
                                     return symbol["ph_am"]
-                        except:
+                        except:  # noqa: E722
                             pass
     return None
 
@@ -47,13 +48,13 @@ def get_phonetic(word):
         return f"美[{result}]"
 
     if result := get_phonetic_by_baidu(word):
-        print(f"通过百度翻译获取音标成功...")
+        print("通过百度翻译获取音标成功...")
         return _format(result)
     if result := get_phonetic_by_youdao(word):
-        print(f"通过有道词典获取音标成功...")
+        print("通过有道词典获取音标成功...")
         return _format(result)
     if result := get_phonetic_by_bing(word):
-        print(f"通过必应词典获取音标成功...")
+        print("通过必应词典获取音标成功...")
         return _format(result)
 
     return "空"
