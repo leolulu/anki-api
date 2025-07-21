@@ -34,7 +34,9 @@ class Anki:
         payload.update({"action": "sync"})
         for _ in range(10):
             try:
-                return self._execute_action(payload)
+                result =  self._execute_action(payload)
+                print("集合同步成功...")
+                return result
             except UserWarning as e:
                 print(f"集合同步失败，原因：{e}")
                 time.sleep(1)
