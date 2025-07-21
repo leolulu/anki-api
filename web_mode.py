@@ -205,6 +205,7 @@ def update_note_fields():
     start_anki()
     ak = Anki(port=18765)
     ak.update_note_fields(note_id, field_and_contents)
+    ak.sync()
     return jsonify({"message": "Note fields updated successfully"})
 
 
