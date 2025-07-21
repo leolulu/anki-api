@@ -1,5 +1,6 @@
 import copy
 import json
+import time
 from typing import Any, Dict
 
 import requests
@@ -31,7 +32,12 @@ class Anki:
     def sync(self):
         payload = copy.copy(self.default_payload)
         payload.update({"action": "sync"})
-        return self._execute_action(payload)
+        for _ in range(10):
+            try:
+                return self._execute_action(payload)
+            except UserWarning as e:
+                print(f"集合同步失败，原因：{e}")
+                time.sleep(1)
 
     def exit(self):
         # 不起作用，不要用
@@ -172,7 +178,7 @@ class Anki:
                 },
                 "options": {
                     "allowDuplicate": False,
-                    "duplicateScope": "deck",
+                    "duplicateScope": "all",
                 },
                 "audio": [
                     {

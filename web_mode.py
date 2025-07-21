@@ -189,11 +189,10 @@ def search_note_title():
     start_anki()
     ak = Anki(port=18765)
     search_result = ak.find_notes(f"问题:{request.args.get('title')}")
-    if "result" in search_result and search_result["result"]:
-        return jsonify({"found":True})
+    if search_result:
+        return jsonify({"found": True})
     else:
         return jsonify({"found": False})
-
 
 
 @app.server.route("/update_note_fields", methods=["POST"])
@@ -218,8 +217,8 @@ def add_note():
     if data is None:
         return "No data received", 400
     word = data.get("word")
+    explanation = data.get("content")
     us_phonetic = get_phonetic(word)
-    explanation = get_explanation_by_doubao(word)
     start_anki()
     ak = Anki(port=18765)
     ak.add_note_second_mode(word, us_phonetic, explanation)
