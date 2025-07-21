@@ -176,9 +176,9 @@ def search_user_query():
     start_anki()
     ak = Anki(port=18765)
     return_result = []
-    for result in ak.search_answer_content(r"re:" + r"\?\?.+?\?\?"):
+    for result in ak.search_answer_content(r"re:" + r"::.+?::"):
         content = result["content"]
-        queries = re.findall(r"\?\?(.+?)\?\?", content)
+        queries = re.findall(r"::(.+?)::", content)
         for query in [q for q in queries if "<br>" not in q]:
             return_result.append(asdict(SearchResult(result["id"], query, content)))
     return jsonify(return_result)
