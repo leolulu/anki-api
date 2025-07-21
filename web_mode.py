@@ -1,13 +1,16 @@
 import re
+from dataclasses import asdict
 from time import sleep
 from urllib.parse import unquote
 
 import psutil
 from dash import Dash, Input, Output, State, dcc, html
+from flask import jsonify, request
 from spellchecker import SpellChecker
 
 from api.anki_api import Anki
 from constants.env import EXE_NAME_ANKI
+from models.type import SearchResult
 from utils.anki_initiator import AnkiProcess, init_anki
 from utils.config_util import get_or_create_config
 from utils.format_util import format_explanation
@@ -24,8 +27,10 @@ def start_anki(actually_start=True):
     #     path = set_user_environment_variable(ENV_VAR_ANKI_PATH, input(f"请输入{PROGRAM_NAME_ANKI}可执行文件路径:").strip().strip('"'))
     path = get_or_create_config("anki_path")
     if actually_start:
-        if not EXE_NAME_ANKI in [i.info["name"] for i in psutil.process_iter(["name"])]:
+        if EXE_NAME_ANKI not in [i.info["name"] for i in psutil.process_iter(["name"])]:
             init_anki(path)
+        else:
+            print("Anki已经在运行中，跳过启动环节...")
 
 
 start_anki(actually_start=False)
@@ -149,12 +154,10 @@ def submit_adding_note(n_clicks, word, us_phonetic, explanation, source):
         return "", "", ""
     start_anki()
     ak = Anki(port=18765)
-    while not "背单词" in ak.get_deck_names_and_ids():
-        sleep(1)
     ak.add_note_from_web(word, us_phonetic, format_explanation(explanation, word), source)
     ak.sync()
-    ak.exit()
-    AnkiProcess.terminate()
+    # ak.exit() #好像不起作用
+    # AnkiProcess.terminate() # 既然现在长驻，就不需要退出了
     return "", "", ""
 
 
@@ -168,5 +171,61 @@ def disable_new_before_submit(value):
     return if_has_content, not if_has_content
 
 
+@app.server.route("/search_user_query", methods=["GET"])
+def search_user_query():
+    start_anki()
+    ak = Anki(port=18765)
+    return_result = []
+    for result in ak.search_answer_content(r"re:" + r"::.+?::"):
+        content = result["content"]
+        queries = re.findall(r"::(.+?)::", content)
+        for query in [q for q in queries if "<br>" not in q]:
+            return_result.append(asdict(SearchResult(result["id"], query, content)))
+    return jsonify(return_result)
+
+
+@app.server.route("/search_note_title", methods=["GET"])
+def search_note_title():
+    start_anki()
+    ak = Anki(port=18765)
+    search_result = ak.find_notes(f"问题:{request.args.get('title')}")
+    if search_result:
+        return jsonify({"found": True})
+    else:
+        return jsonify({"found": False})
+
+
+@app.server.route("/update_note_fields", methods=["POST"])
+def update_note_fields():
+    data = request.json
+    if data is None:
+        return "No data received", 400
+    note_id = data.get("note_id")
+    field_and_contents = data.get("field_and_contents")
+    start_anki()
+    ak = Anki(port=18765)
+    ak.update_note_fields(note_id, field_and_contents)
+    ak.sync()
+    return jsonify({"message": "Note fields updated successfully"})
+
+
+@app.server.route("/add_note", methods=["POST"])
+def add_note():
+    """
+    这个方法只适用于初见生词模式，正式单词目前还是使用submit_adding_note()从web端手动添加
+    """
+    data = request.json
+    if data is None:
+        return "No data received", 400
+    word = data.get("word")
+    explanation = data.get("content")
+    us_phonetic = get_phonetic(word)
+    start_anki()
+    ak = Anki(port=18765)
+    ak.add_note_second_mode(word, us_phonetic, explanation)
+    ak.sync()
+    return jsonify({"message": "Note added successfully"})
+
+
 if __name__ == "__main__":
-    app.run_server(host="0.0.0.0", port=1130, debug=False)
+    app.run(host="0.0.0.0", port=1130, debug=False)
