@@ -29,8 +29,6 @@ def start_anki(actually_start=True):
     if actually_start:
         if EXE_NAME_ANKI not in [i.info["name"] for i in psutil.process_iter(["name"])]:
             init_anki(path)
-        else:
-            print("Anki已经在运行中，跳过启动环节...")
 
 
 start_anki(actually_start=False)
