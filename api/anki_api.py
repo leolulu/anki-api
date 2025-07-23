@@ -5,6 +5,7 @@ from typing import Any, Dict
 
 import requests
 
+from utils.audio_util import get_valid_audio
 from utils.dict_util import BaiduFanyi
 from utils.highlight_word import highlight_word
 
@@ -34,7 +35,7 @@ class Anki:
         payload.update({"action": "sync"})
         for _ in range(10):
             try:
-                result =  self._execute_action(payload)
+                result = self._execute_action(payload)
                 print("集合同步成功...")
                 return result
             except UserWarning as e:
@@ -118,7 +119,7 @@ class Anki:
                         ],
                     },
                     {
-                        "url": f"http://dict.youdao.com/dictvoice?type=0&audio={word}",
+                        "data": get_valid_audio(word),
                         "filename": f"{word}_us.mp3",
                         "fields": [
                             "美音标",
@@ -151,7 +152,7 @@ class Anki:
                 },
                 "audio": [
                     {
-                        "url": f"http://dict.youdao.com/dictvoice?type=0&audio={word}",
+                        "data": get_valid_audio(word),
                         "filename": f"{word}_us.mp3",
                         "fields": [
                             "美音标",
@@ -184,7 +185,7 @@ class Anki:
                 },
                 "audio": [
                     {
-                        "url": f"http://dict.youdao.com/dictvoice?type=0&audio={word}",
+                        "data": get_valid_audio(word),
                         "filename": f"{word}_us.mp3",
                         "fields": [
                             "美音标",
