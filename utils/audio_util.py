@@ -2,6 +2,7 @@ import base64
 import os
 from pathlib import Path
 
+import pyttsx3
 import requests
 
 
@@ -36,6 +37,16 @@ def get_valid_audio(word: str, return_bytes=False) -> str | bytes | None:
             print(f"金山词霸没有找到音频: {word}")
     except Exception as e:
         print(f"从金山词霸获取音频失败: {e}")
+
+    # If both APIs fail, use pyttsx3 to generate audio
+    temp_output_audio_file_path = os.path.join(str(Path.home() / "Downloads"), "temp_us.mp3")
+    engine = pyttsx3.init()
+    engine.save_to_file(word, temp_output_audio_file_path)
+    engine.runAndWait()
+    engine.stop()
+    with open(temp_output_audio_file_path, "rb") as f:
+        audio_byte_data = f.read()
+    os.remove(temp_output_audio_file_path)
 
     if audio_byte_data:
         if return_bytes:
