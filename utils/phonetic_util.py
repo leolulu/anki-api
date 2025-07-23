@@ -5,7 +5,7 @@ from playwright.sync_api import expect, sync_playwright
 
 
 def get_phonetic_by_youdao(word):
-    url = f"https://www.youdao.com/result?word={word}&lang=en"
+    url = "https://www.youdao.com/result?word={word}&lang=en"
     res = requests.get(url.format(word=word))
     for i in re.findall("per-phone.*?点击发音", res.text):
         if "美" in i:
@@ -16,7 +16,7 @@ def get_phonetic_by_youdao(word):
 
 
 def get_phonetic_by_bing(word):
-    url = f"https://cn.bing.com/dict/search?q={word}"
+    url = "https://cn.bing.com/dict/search?q={word}"
     res = requests.get(url.format(word=word))
     for i in re.findall(r"美.*?\[(.*?)\]", res.text):
         return i.strip()
@@ -26,7 +26,7 @@ def get_phonetic_by_bing(word):
 def get_phonetic_by_baidu(word):
     url = f"https://fanyi.baidu.com/mtpe-individual/transText?lang=en2zh&query={word}"
     with sync_playwright() as p:
-        browser = p.chromium.launch(headless=False)
+        browser = p.chromium.launch(headless=True)
         page = browser.new_page()
         try:
             page.goto(url, wait_until="load", timeout=120000)
@@ -49,10 +49,24 @@ def get_phonetic_by_baidu(word):
     return phonetic
 
 
+def get_phonetic_by_ciba(word):
+    url = "https://dict-co.iciba.com/api/dictionary.php?key=AA6C7429C3884C9E766C51187BD1D86F&type=json&w={word}"
+    res = requests.get(url.format(word=word))
+    data = res.json()
+    try:
+        return data["symbols"][0]["ph_am"]
+    except Exception as e:
+        print(f"通过金山词霸获取音标失败: {e}")
+        return None
+
+
 def get_phonetic(word):
     def _format(result):
         return f"美[{result}]"
 
+    if result := get_phonetic_by_ciba(word):
+        print("通过金山词霸获取音标成功...")
+        return _format(result)
     if result := get_phonetic_by_youdao(word):
         print("通过有道词典获取音标成功...")
         return _format(result)
