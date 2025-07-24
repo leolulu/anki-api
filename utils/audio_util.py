@@ -83,4 +83,6 @@ if __name__ == "__main__":
 
     while True:
         word = input("输入单词：").strip()
+        if not word:
+            continue
         download_us_voice(word)
