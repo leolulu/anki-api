@@ -11,7 +11,7 @@ default_headers = {
 }
 
 
-def get_valid_audio(word: str, return_bytes=False) -> str | bytes | None:
+def get_valid_audio(word: str, return_bytes=False, need_ffmpeg_recode=True) -> str | bytes | None:
     audio_byte_data = None
 
     try:
@@ -52,14 +52,20 @@ def get_valid_audio(word: str, return_bytes=False) -> str | bytes | None:
             engine.save_to_file(word, temp_output_audio_file_path)
             engine.runAndWait()
             engine.stop()
-            temp_output_audio_file_ffmpeg_mp3_path = "_ffmpeg_mp3".join(os.path.splitext(temp_output_audio_file_path))
-            subprocess.run(f'ffmpeg -i "{temp_output_audio_file_path}" "{temp_output_audio_file_ffmpeg_mp3_path}"', shell=True, check=True)
-            with open(temp_output_audio_file_ffmpeg_mp3_path, "rb") as f:
+            with open(temp_output_audio_file_path, "rb") as f:
                 audio_byte_data = f.read()
             os.remove(temp_output_audio_file_path)
-            os.remove(temp_output_audio_file_ffmpeg_mp3_path)
         except Exception as e:
             print(f"使用 pyttsx3 生成音频失败: {e}")
+
+    if need_ffmpeg_recode:
+        command = "ffmpeg -hide_banner -i - -f mp3 -"
+        process = subprocess.Popen(command, stdin=subprocess.PIPE, stdout=subprocess.PIPE, stderr=subprocess.PIPE)
+        stdout, stderr = process.communicate(input=audio_byte_data)
+        if process.returncode != 0:
+            print(f"ffmpeg转码失败: {stderr.decode('utf-8')}")
+        else:
+            audio_byte_data = stdout
 
     if audio_byte_data:
         if return_bytes:
