@@ -186,7 +186,8 @@ def search_user_query():
 def search_note_title():
     start_anki()
     ak = Anki(port=18765)
-    search_result = ak.find_notes(f"问题:{request.args.get('title')}")
+    title = request.args.get("title")
+    search_result = ak.find_notes(f'问题:"{title}"')
     if search_result:
         return jsonify({"found": True})
     else:
