@@ -1,6 +1,5 @@
 import re
 from dataclasses import asdict
-from time import sleep
 from urllib.parse import unquote
 
 import psutil
@@ -9,9 +8,10 @@ from flask import jsonify, request
 from spellchecker import SpellChecker
 
 from api.anki_api import Anki
+from constants.anki import QUESTION_PREFIX, QUESTION_SUFFIX
 from constants.env import EXE_NAME_ANKI
 from models.type import SearchResult
-from utils.anki_initiator import AnkiProcess, init_anki
+from utils.anki_initiator import init_anki
 from utils.config_util import get_or_create_config
 from utils.format_util import format_explanation
 from utils.gen_exp_by_doubao import get_explanation_by_doubao
@@ -174,9 +174,9 @@ def search_user_query():
     start_anki()
     ak = Anki(port=18765)
     return_result = []
-    for result in ak.search_answer_content(r"re:" + r"::.+?::"):
+    for result in ak.search_answer_content(r"re:" + r"{}.+?{}".format(QUESTION_PREFIX, QUESTION_SUFFIX)):
         content = result["content"]
-        queries = re.findall(r"::(.+?)::", content)
+        queries = re.findall(r"{}(.+?){}".format(QUESTION_PREFIX, QUESTION_SUFFIX), content)
         for query in [q for q in queries if "<br>" not in q]:
             return_result.append(asdict(SearchResult(result["id"], query, content)))
     return jsonify(return_result)
