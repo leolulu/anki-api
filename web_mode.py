@@ -226,5 +226,13 @@ def add_note():
     return jsonify({"message": "Note added successfully"})
 
 
+@app.server.route("/sync_anki", methods=["GET"])
+def sync_anki():
+    start_anki()
+    ak = Anki(port=18765)
+    ak.sync()
+    return jsonify({"message": "Anki synced successfully"})
+
+
 if __name__ == "__main__":
     app.run(host="0.0.0.0", port=1130, debug=False)
