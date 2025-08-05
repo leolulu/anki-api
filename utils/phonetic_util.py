@@ -54,7 +54,9 @@ def get_phonetic_by_ciba(word):
     res = requests.get(url.format(word=word))
     data = res.json()
     try:
-        return data["symbols"][0]["ph_am"]
+        p = data["symbols"][0]["ph_am"]
+        if p.strip():
+            return p.strip()
     except Exception as e:
         print(f"通过金山词霸获取音标失败: {e}")
         return None
@@ -64,17 +66,18 @@ def get_phonetic(word):
     def _format(result):
         return f"美[{result}]"
 
-    if result := get_phonetic_by_ciba(word):
-        print("通过金山词霸获取音标成功...")
+    if result := get_phonetic_by_bing(word):
+        print("通过必应词典获取音标成功...")
         return _format(result)
     if result := get_phonetic_by_youdao(word):
         print("通过有道词典获取音标成功...")
         return _format(result)
-    if result := get_phonetic_by_bing(word):
-        print("通过必应词典获取音标成功...")
-        return _format(result)
     if result := get_phonetic_by_baidu(word):
         print("通过百度翻译获取音标成功...")
+        return _format(result)
+    # 不推荐使用词霸，因为美式发音使用KK音标
+    if result := get_phonetic_by_ciba(word):
+        print("通过金山词霸获取音标成功...")
         return _format(result)
 
     return "空"
