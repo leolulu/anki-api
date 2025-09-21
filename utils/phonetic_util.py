@@ -81,3 +81,22 @@ def get_phonetic(word):
         return _format(result)
 
     return "空"
+
+
+def get_all_phonetic(word: str) -> str:
+    data = {
+        "百度词典": get_phonetic_by_baidu(word),
+        "必应词典": get_phonetic_by_bing(word),
+        "有道词典": get_phonetic_by_youdao(word),
+        "金山词霸": get_phonetic_by_ciba(word),
+    }
+    filtered_data = {k: v for k, v in data.items() if v is not None}
+    result = "\n".join([f"{k}: /{v}/" for k, v in filtered_data.items()])
+    if result == "":
+        return "通过Api获取音标皆返回为None..."
+    else:
+        return result
+
+
+if __name__ == "__main__":
+    print(get_all_phonetic("Assumi"))
