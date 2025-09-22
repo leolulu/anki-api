@@ -17,9 +17,13 @@ class MyHttpClientWithProxy(HttpClient):
 
     def get(self, url, params=None, **kwargs) -> Response:
         try:
+            # WORKAROUND: 
+            # https://msedgedriver.azureedge.net/LATEST_RELEASE_138_WINDOWS is now at https://msedgedriver.microsoft.com/LATEST_RELEASE_138_WINDOWS 
+            # So replace azureedge.net with microsoft.com
+            url = url.replace("azureedge.net", "microsoft.com")
             resp = requests.get(url=url, verify=ssl_verify(), stream=True, **kwargs)
-        except:
-            print("内置client下载失败，采用代理client下载...")
+        except Exception as e:
+            print(f"内置client下载失败，采用代理client下载...出错原因：{e}")
             proxies = {
                 "http": "http://127.0.0.1:10809",
                 "https": "http://127.0.0.1:10809",
