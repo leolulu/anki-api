@@ -57,7 +57,8 @@ if __name__ == "__main__":
         try:
             ak = Anki(port=18765)
             break
-        except:  # noqa: E722
+        except Exception as e:
+            print(f"Anki连接失败: {e}")
             time.sleep(5)
 
     while True:
