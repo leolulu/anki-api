@@ -50,7 +50,7 @@ def starter(env_var_name):
 
 if __name__ == "__main__":
     BaiduFanyi.init_edge_browser()
-    starter(ENV_VAR_LOGSEQ_PATH)
+    # starter(ENV_VAR_LOGSEQ_PATH)
     starter(ENV_VAR_ANKI_PATH)
 
     while True:
