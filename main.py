@@ -8,8 +8,8 @@ import psutil
 
 from api.anki_api import Anki
 from constants.env import ENV_VAR_ANKI_PATH, ENV_VAR_LOGSEQ_PATH, EXE_NAME_ANKI, EXE_NAME_LOGSEQ, PROGRAM_NAME_ANKI, PROGRAM_NAME_LOGSEQ
+from utils.audio_util import download_us_voice
 from utils.dict_util import BaiduFanyi
-from utils.download_dictvoice import download_us_voice
 from utils.env_var_util import read_user_environment_variable, set_user_environment_variable
 
 DOWNLOAD_VOICE_PREFIX = ":"
@@ -57,7 +57,7 @@ if __name__ == "__main__":
         try:
             ak = Anki(port=18765)
             break
-        except:
+        except:  # noqa: E722
             time.sleep(5)
 
     while True:
@@ -74,5 +74,5 @@ if __name__ == "__main__":
                 try:
                     ak.add_card(input_info)
                     break
-                except:
+                except:  # noqa: E722
                     retry_times -= 1

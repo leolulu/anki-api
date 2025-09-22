@@ -76,17 +76,17 @@ def get_valid_audio(word: str, return_bytes=False, need_ffmpeg_recode=True) -> s
         return None
 
 
+def download_us_voice(word):
+    word = word.strip().lower()
+    audio_byte_data = get_valid_audio(word, return_bytes=True)
+    if audio_byte_data and isinstance(audio_byte_data, bytes):
+        with open(os.path.join(str(Path.home() / "Downloads"), f"{word}_us.mp3"), "wb") as f:
+            f.write(audio_byte_data)
+    else:
+        print(f"Api上没有找到 {word} 的音频数据...")
+
+
 if __name__ == "__main__":
-
-    def download_us_voice(word):
-        word = word.strip().lower()
-        audio_byte_data = get_valid_audio(word, return_bytes=True)
-        if audio_byte_data and isinstance(audio_byte_data, bytes):
-            with open(os.path.join(str(Path.home() / "Downloads"), f"{word}_us.mp3"), "wb") as f:
-                f.write(audio_byte_data)
-        else:
-            print(f"Api上没有找到 {word} 的音频数据...")
-
     while True:
         word = input("输入单词：").strip()
         if not word:
