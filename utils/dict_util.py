@@ -24,6 +24,14 @@ class BaiduFanyi:
 
     def __init__(self, word) -> None:
         BaiduFanyi.init_edge_browser()
+
+        timeout_sec = 60
+        deadline = time.time() + timeout_sec
+        while not hasattr(BaiduFanyi, "EDGE_BROWSER"):
+            if time.time() > deadline:
+                raise TimeoutError(f"BaiduFanyi Edge browser not ready after {timeout_sec}s")
+            time.sleep(1)
+
         self.edge_browser = BaiduFanyi.EDGE_BROWSER
         self.init_parameter()
         self.if_definitions_found = False
